@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <meta name="description" content="Votre revue de presse quotidienne ENS — anglais, espagnol, français" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="La Revue" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <title>La Revue · Presse ENS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --night:#0f0f1a;--night-2:#1a1a2e;--night-3:#252540;--night-4:#32325a;
+      --glow:#7b6ef6;--glow-dim:rgba(123,110,246,0.18);--glow-text:#a99ff8;
+      --paper:#f7f5f0;--ink:#1a1a1a;--ink-mid:#5a5a6a;--ink-faint:#9a9aaa;
+      --rule:rgba(255,255,255,0.08);
+      --en:#5b9bd5;--es:#e05c4b;--fr:#4caf82;
+      --en-bg:rgba(91,155,213,0.12);--es-bg:rgba(224,92,75,0.12);--fr-bg:rgba(76,175,130,0.12);
+      --radius:12px;--radius-sm:6px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--night);color:#e8e6f0;font-family:'Crimson Pro',Georgia,serif;font-size:18px;line-height:1.7;min-height:100vh;-webkit-font-smoothing:antialiased;}
+
+    /* HEADER */
+    .header{background:linear-gradient(180deg,var(--night-2) 0%,transparent 100%);padding:20px 20px 16px;position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--rule);}
+    .header-inner{max-width:720px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+    .logo-eyebrow{font-family:'Inter',sans-serif;font-size:9px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--glow-text);opacity:.7;margin-bottom:2px;}
+    .logo-name{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;background:linear-gradient(135deg,#fff 30%,var(--glow-text));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .header-date{font-family:'Inter',sans-serif;font-size:11px;color:var(--ink-faint);letter-spacing:.06em;text-align:right;}
+
+    /* BANNERS */
+    .banner{display:none;border-radius:var(--radius);padding:12px 16px;margin:12px 20px 0;max-width:680px;margin-left:auto;margin-right:auto;align-items:center;gap:12px;}
+    .banner.show{display:flex;}
+    .banner-install{background:var(--glow-dim);border:1px solid rgba(123,110,246,.3);}
+    .banner-notif{background:rgba(76,175,130,.1);border:1px solid rgba(76,175,130,.25);}
+    .banner-text{font-family:'Inter',sans-serif;font-size:13px;flex:1;}
+    .banner-install .banner-text{color:var(--glow-text);}
+    .banner-notif .banner-text{color:var(--fr);}
+    .banner-btn{font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:7px 16px;border:none;border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap;color:#fff;}
+    .banner-install .banner-btn{background:var(--glow);}
+    .banner-notif .banner-btn{background:var(--fr);}
+    .banner-dismiss{background:none;border:none;color:var(--ink-faint);cursor:pointer;font-size:18px;padding:0 4px;}
+
+    /* MAIN */
+    .main{max-width:720px;margin:0 auto;padding:24px 20px 60px;}
+
+    /* CONFIG */
+    .config-card{background:var(--night-2);border:1px solid var(--rule);border-radius:var(--radius);padding:24px;margin-bottom:28px;}
+    .config-title{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:20px;}
+    .config-row{display:flex;flex-wrap:wrap;gap:20px;margin-bottom:20px;}
+    .config-group{display:flex;flex-direction:column;gap:8px;flex:1;min-width:160px;}
+    .config-label{font-family:'Inter',sans-serif;font-size:10px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-faint);}
+    .lang-pills{display:flex;gap:8px;flex-wrap:wrap;}
+    .lang-pill{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.1em;padding:7px 18px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:transparent;color:var(--ink-faint);cursor:pointer;transition:all .18s;text-transform:uppercase;}
+    .on-en{background:var(--en-bg);border-color:var(--en);color:var(--en);}
+    .on-es{background:var(--es-bg);border-color:var(--es);color:var(--es);}
+    .on-fr{background:var(--fr-bg);border-color:var(--fr);color:var(--fr);}
+    .config-select{font-family:'Crimson Pro',serif;font-size:16px;padding:10px 14px;background:var(--night-3);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-sm);color:#e8e6f0;appearance:none;cursor:pointer;outline:none;transition:border-color .15s;width:100%;}
+    .config-select:focus{border-color:var(--glow);}
+
+    /* Notif row */
+    .notif-row{display:flex;align-items:center;gap:12px;padding-top:16px;border-top:1px solid var(--rule);}
+    .notif-toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
+    .notif-toggle input{opacity:0;width:0;height:0;}
+    .toggle-slider{position:absolute;inset:0;background:var(--night-4);border-radius:999px;cursor:pointer;transition:background .2s;}
+    .toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s;}
+    .notif-toggle input:checked+.toggle-slider{background:var(--glow);}
+    .notif-toggle input:checked+.toggle-slider::before{transform:translateX(20px);}
+    .notif-label{font-family:'Inter',sans-serif;font-size:13px;color:#e8e6f0;flex:1;}
+    .notif-time-input{font-family:'Inter',sans-serif;font-size:14px;padding:6px 10px;background:var(--night-3);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-sm);color:#e8e6f0;outline:none;width:100px;}
+    .notif-time-input:focus{border-color:var(--glow);}
+
+    /* Generate btn */
+    .generate-btn{width:100%;margin-top:20px;padding:16px;background:linear-gradient(135deg,var(--glow) 0%,#5b4ef0 100%);border:none;border-radius:var(--radius);color:#fff;font-family:'Playfair Display',serif;font-size:1.1rem;font-style:italic;cursor:pointer;transition:opacity .15s,transform .1s;letter-spacing:.02em;}
+    .generate-btn:hover{opacity:.92;transform:translateY(-1px);}
+    .generate-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+
+    /* Progress */
+    .progress-wrap{height:2px;background:var(--night-3);border-radius:999px;margin:16px 0 8px;overflow:hidden;display:none;}
+    .progress-wrap.show{display:block;}
+    .progress-bar{height:100%;background:linear-gradient(90deg,var(--glow),var(--fr));border-radius:999px;animation:sweep 1.6s ease-in-out infinite;width:50%;}
+    @keyframes sweep{0%{transform:translateX(-120%);}100%{transform:translateX(320%);}}
+    .status-msg{font-family:'Inter',sans-serif;font-size:12px;color:var(--ink-faint);font-style:italic;min-height:18px;letter-spacing:.03em;}
+
+    /* Digest */
+    .digest-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--rule);}
+    .digest-heading{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:400;color:rgba(255,255,255,.5);}
+    .digest-reading{font-family:'Inter',sans-serif;font-size:11px;color:var(--glow-text);letter-spacing:.08em;opacity:.7;}
+
+    /* Article card */
+    .article-card{background:var(--night-2);border:1px solid var(--rule);border-radius:var(--radius);padding:28px;margin-bottom:20px;transition:border-color .2s;}
+    .article-card:hover{border-color:rgba(123,110,246,.25);}
+    .article-meta{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+    .lang-badge{font-family:'Inter',sans-serif;font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:4px 10px;border-radius:999px;}
+    .badge-en{background:var(--en-bg);color:var(--en);}
+    .badge-es{background:var(--es-bg);color:var(--es);}
+    .badge-fr{background:var(--fr-bg);color:var(--fr);}
+    .article-source{font-family:'Inter',sans-serif;font-size:11px;color:var(--ink-faint);letter-spacing:.08em;text-transform:uppercase;}
+    .article-title{font-family:'Playfair Display',serif;font-size:clamp(1.2rem,2.5vw,1.55rem);font-weight:700;line-height:1.25;color:#fff;margin-bottom:16px;}
+
+    /* Tabs */
+    .tabs{display:flex;gap:4px;margin-bottom:18px;background:var(--night-3);border-radius:var(--radius-sm);padding:4px;}
+    .tab-btn{font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:.08em;padding:7px 14px;border:none;border-radius:4px;background:transparent;color:var(--ink-faint);cursor:pointer;transition:all .15s;text-transform:uppercase;flex:1;}
+    .tab-btn.active{background:var(--night-2);color:#fff;}
+    .tab-content{display:none;}
+    .tab-content.active{display:block;}
+    .summary-text{font-size:18px;line-height:1.75;color:rgba(232,230,240,.9);}
+    .excerpt-text{font-style:italic;font-size:17px;color:var(--ink-mid);line-height:1.65;border-left:2px solid var(--glow-dim);padding-left:16px;}
+
+    /* Vocab */
+    .vocab-block{background:var(--night-3);border-radius:var(--radius-sm);padding:16px 20px;margin-top:18px;}
+    .vocab-title{font-family:'Inter',sans-serif;font-size:9px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--glow-text);opacity:.6;margin-bottom:10px;}
+    .vocab-list{display:flex;flex-wrap:wrap;gap:8px;}
+    .vocab-chip{font-size:14px;padding:4px 12px;background:var(--night-2);border:1px solid var(--rule);border-radius:999px;}
+    .vocab-word{font-weight:600;color:#fff;}
+    .vocab-sep{color:var(--ink-faint);margin:0 4px;}
+    .vocab-def{color:var(--ink-faint);font-style:italic;}
+
+    /* Question */
+    .question-block{display:flex;gap:14px;margin-top:18px;padding:16px 20px;background:var(--glow-dim);border-radius:var(--radius-sm);border:1px solid rgba(123,110,246,.15);align-items:flex-start;}
+    .q-icon{font-family:'Playfair Display',serif;font-size:1.5rem;font-style:italic;color:var(--glow);line-height:1;flex-shrink:0;margin-top:2px;}
+    .q-text{font-style:italic;font-size:16px;color:var(--glow-text);line-height:1.55;}
+
+    /* Empty */
+    .empty-state{text-align:center;padding:60px 20px;color:var(--ink-faint);}
+    .empty-icon{font-size:2.5rem;margin-bottom:16px;opacity:.25;}
+    .empty-text{font-style:italic;font-size:18px;line-height:1.5;}
+
+    /* History */
+    .history-section{margin-top:40px;}
+    .history-title{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:12px;padding-top:20px;border-top:1px solid var(--rule);}
+    .history-list{display:flex;flex-direction:column;gap:8px;}
+    .history-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--night-2);border:1px solid var(--rule);border-radius:var(--radius-sm);cursor:pointer;transition:border-color .15s;}
+    .history-item:hover{border-color:var(--glow);}
+    .history-item-date{font-family:'Inter',sans-serif;font-size:12px;color:var(--ink-faint);}
+    .history-item-theme{font-size:15px;color:rgba(232,230,240,.7);}
+    .history-arrow{color:var(--glow);font-size:14px;}
+
+    /* Toast */
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--night-3);border:1px solid var(--glow);color:var(--glow-text);font-family:'Inter',sans-serif;font-size:13px;padding:12px 24px;border-radius:999px;transition:transform .3s cubic-bezier(.34,1.56,.64,1);z-index:200;white-space:nowrap;}
+    .toast.show{transform:translateX(-50%) translateY(0);}
+
+    @media(max-width:520px){
+      .config-row{flex-direction:column;}
+      .article-card{padding:20px 18px;}
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div>
+      <div class="logo-eyebrow">Préparation ENS</div>
+      <div class="logo-name">La Revue</div>
+    </div>
+    <div class="header-date" id="headerDate"></div>
+  </div>
+</header>
+
+<div class="banner banner-install" id="installBanner">
+  <div class="banner-text">📱 Installer l'app sur votre écran d'accueil</div>
+  <button class="banner-btn" onclick="installApp()">Installer</button>
+  <button class="banner-dismiss" onclick="document.getElementById('installBanner').classList.remove('show')">✕</button>
+</div>
+
+<div class="banner banner-notif" id="notifBanner">
+  <div class="banner-text">🔔 Recevoir votre revue chaque matin par notification</div>
+  <button class="banner-btn" onclick="requestNotifPermission()">Activer</button>
+</div>
+
+<main class="main">
+  <div class="config-card">
+    <div class="config-title">Configurer ma revue</div>
+    <div class="config-row">
+      <div class="config-group">
+        <span class="config-label">Langues</span>
+        <div class="lang-pills">
+          <button class="lang-pill on-en" data-lang="en" onclick="toggleLang(this)">🇬🇧 EN</button>
+          <button class="lang-pill on-es" data-lang="es" onclick="toggleLang(this)">🇪🇸 ES</button>
+          <button class="lang-pill on-fr" data-lang="fr" onclick="toggleLang(this)">🇫🇷 FR</button>
+        </div>
+      </div>
+    </div>
+    <div class="config-row">
+      <div class="config-group">
+        <span class="config-label">Thème du jour</span>
+        <select class="config-select" id="themeSelect">
+          <option value="libre">Actualité générale</option>
+          <option value="geopolitique">Géopolitique</option>
+          <option value="economie">Économie mondiale</option>
+          <option value="culture">Culture & Société</option>
+          <option value="sciences">Sciences & Tech</option>
+          <option value="environnement">Environnement</option>
+          <option value="philosophie">Philosophie & Idées</option>
+        </select>
+      </div>
+      <div class="config-group">
+        <span class="config-label">Durée</span>
+        <select class="config-select" id="durationSelect">
+          <option value="10">≈ 10 min — 3 articles</option>
+          <option value="15" selected>≈ 15 min — 4 articles</option>
+          <option value="20">≈ 20 min — 6 articles</option>
+        </select>
+      </div>
+    </div>
+    <div class="notif-row">
+      <label class="notif-toggle">
+        <input type="checkbox" id="notifToggle" onchange="toggleNotifTime()" />
+        <span class="toggle-slider"></span>
+      </label>
+      <span class="notif-label">Notification quotidienne</span>
+      <input type="time" class="notif-time-input" id="notifTime" value="08:00" style="display:none" onchange="savePrefs()" />
+    </div>
+    <button class="generate-btn" id="generateBtn" onclick="generateDigest()">
+      Générer ma revue du jour →
+    </button>
+    <div class="progress-wrap" id="progressWrap"><div class="progress-bar"></div></div>
+    <div class="status-msg" id="statusMsg"></div>
+  </div>
+
+  <div id="digestOutput">
+    <div class="empty-state">
+      <div class="empty-icon">◆</div>
+      <div class="empty-text">Votre revue du jour apparaîtra ici.<br/>Configurez et cliquez sur <em>Générer</em>.</div>
+    </div>
+  </div>
+
+  <div class="history-section" id="historySection" style="display:none">
+    <div class="history-title">Revues précédentes</div>
+    <div class="history-list" id="historyList"></div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const activeLangs = new Set(['en','es','fr']);
+let deferredInstall = null;
+const SOURCES = {
+  en:['The Economist','The Guardian','BBC News','Financial Times','The Atlantic'],
+  es:['El País','El Mundo','La Vanguardia','El Confidencial','ABC'],
+  fr:['Le Monde','Le Figaro','Libération','Les Echos',"L'Obs"],
+};
+const now = new Date();
+document.getElementById('headerDate').textContent =
+  now.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+
+function savePrefs(){
+  localStorage.setItem('larevue_prefs',JSON.stringify({
+    langs:[...activeLangs],
+    theme:document.getElementById('themeSelect').value,
+    duration:document.getElementById('durationSelect').value,
+    notifOn:document.getElementById('notifToggle').checked,
+    notifTime:document.getElementById('notifTime').value,
+  }));
+}
+function loadPrefs(){
+  try{
+    const p=JSON.parse(localStorage.getItem('larevue_prefs')||'{}');
+    if(p.langs){activeLangs.clear();p.langs.forEach(l=>activeLangs.add(l));
+      document.querySelectorAll('.lang-pill').forEach(b=>{const l=b.dataset.lang;b.className='lang-pill'+(activeLangs.has(l)?` on-${l}`:'');});}
+    if(p.theme)document.getElementById('themeSelect').value=p.theme;
+    if(p.duration)document.getElementById('durationSelect').value=p.duration;
+    if(p.notifOn){document.getElementById('notifToggle').checked=true;document.getElementById('notifTime').style.display='block';}
+    if(p.notifTime)document.getElementById('notifTime').value=p.notifTime;
+  }catch(e){}
+}
+['themeSelect','durationSelect'].forEach(id=>document.getElementById(id).addEventListener('change',savePrefs));
+
+function toggleLang(btn){
+  const l=btn.dataset.lang;
+  if(activeLangs.has(l)){if(activeLangs.size===1){showToast('Gardez au moins une langue !');return;}activeLangs.delete(l);btn.className='lang-pill';}
+  else{activeLangs.add(l);btn.className=`lang-pill on-${l}`;}
+  savePrefs();
+}
+function toggleNotifTime(){
+  const on=document.getElementById('notifToggle').checked;
+  document.getElementById('notifTime').style.display=on?'block':'none';
+  if(on)requestNotifPermission();
+  savePrefs();
+}
+
+async function requestNotifPermission(){
+  if(!('Notification' in window)){showToast('Notifications non supportées');return;}
+  const p=await Notification.requestPermission();
+  if(p==='granted'){
+    document.getElementById('notifBanner').classList.remove('show');
+    document.getElementById('notifToggle').checked=true;
+    document.getElementById('notifTime').style.display='block';
+    showToast('✓ Notifications activées !');
+    scheduleNotif();savePrefs();
+  } else showToast('Activez les notifications dans les réglages du navigateur');
+}
+function scheduleNotif(){
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  const time=document.getElementById('notifTime').value||'08:00';
+  const[h,m]=time.split(':').map(Number);
+  const t=new Date();t.setHours(h,m,0,0);
+  if(t<=new Date())t.setDate(t.getDate()+1);
+  setTimeout(()=>{
+    new Notification('La Revue · Votre presse du jour',{body:'Votre revue est prête — cliquez pour lire !',icon:'icons/icon-192.png'});
+    scheduleNotif();
+  },t-new Date());
+}
+if('Notification' in window&&Notification.permission==='default')
+  setTimeout(()=>document.getElementById('notifBanner').classList.add('show'),1500);
+
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();deferredInstall=e;
+  document.getElementById('installBanner').classList.add('show');
+});
+function installApp(){
+  if(!deferredInstall)return;
+  deferredInstall.prompt();
+  deferredInstall.userChoice.then(r=>{
+    if(r.outcome==='accepted'){document.getElementById('installBanner').classList.remove('show');showToast('✓ App installée !');}
+    deferredInstall=null;
+  });
+}
+
+function getHistory(){try{return JSON.parse(localStorage.getItem('larevue_history')||'[]');}catch{return[];}}
+function saveToHistory(articles,theme,duration){
+  const h=getHistory();
+  h.unshift({date:new Date().toISOString(),theme,duration,articles,langs:[...activeLangs]});
+  localStorage.setItem('larevue_history',JSON.stringify(h.slice(0,14)));
+  renderHistory();
+}
+const THEME_NAMES={libre:'Actualité générale',geopolitique:'Géopolitique',economie:'Économie',culture:'Culture & Société',sciences:'Sciences & Tech',environnement:'Environnement',philosophie:'Philosophie'};
+function renderHistory(){
+  const h=getHistory();const sec=document.getElementById('historySection');const list=document.getElementById('historyList');
+  if(!h.length){sec.style.display='none';return;}
+  sec.style.display='block';
+  list.innerHTML=h.slice(0,5).map((x,i)=>`
+    <div class="history-item" onclick="loadFromHistory(${i})">
+      <div>
+        <div class="history-item-date">${new Date(x.date).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})}</div>
+        <div class="history-item-theme">${THEME_NAMES[x.theme]||x.theme} · ${x.duration} min</div>
+      </div>
+      <span class="history-arrow">→</span>
+    </div>`).join('');
+}
+function loadFromHistory(i){
+  const h=getHistory();if(!h[i])return;
+  renderDigest(h[i].articles,h[i].duration,h[i].langs);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function generateDigest(){
+  const btn=document.getElementById('generateBtn');
+  const progress=document.getElementById('progressWrap');
+  const status=document.getElementById('statusMsg');
+  const output=document.getElementById('digestOutput');
+  const langs=[...activeLangs];
+  const theme=document.getElementById('themeSelect').value;
+  const themeLabel=document.getElementById('themeSelect').selectedOptions[0].text;
+  const duration=document.getElementById('durationSelect').value;
+  const nbArticles=duration==='10'?3:duration==='15'?4:6;
+  const sourceList=langs.flatMap(l=>SOURCES[l].slice(0,2)).join(', ');
+
+  btn.disabled=true;progress.classList.add('show');status.textContent='Connexion à Claude…';output.innerHTML='';
+
+  try{
+    status.textContent='Claude rédige votre revue…';
+    const response=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',max_tokens:4000,
+        system:`Tu es un agrégateur de presse expert, spécialisé dans la préparation aux concours ENS. Tu crées des revues de presse synthétiques, analytiques et pédagogiques. Tu réponds UNIQUEMENT en JSON valide, sans aucun texte avant ou après.`,
+        messages:[{role:'user',content:`Génère une revue de presse du ${now.toLocaleDateString('fr-FR')} avec exactement ${nbArticles} articles.
+Langues (répartis équitablement) : ${langs.join(', ')}.
+Thème : ${themeLabel}. Sources : ${sourceList}.
+Réponds avec ce tableau JSON uniquement :
+[{"lang":"en"|"es"|"fr","source":"...","title":"...","summary_fr":"Résumé analytique 4-6 phrases niveau hypokhâgne.","excerpt_original":"2-3 phrases style authentique de la source.","vocab":[{"word":"...","def":"..."}],"question":"Question oral ENS en français."}]
+Contraintes : vocab = 3-5 mots/article. Résumés analytiques (enjeux, causes, conséquences). Titres/extraits authentiques.`}],
+      }),
+    });
+    if(!response.ok)throw new Error(`Erreur API ${response.status}`);
+    const data=await response.json();
+    const raw=data.content.map(b=>b.text||'').join('');
+    const articles=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    renderDigest(articles,duration,langs);
+    saveToHistory(articles,theme,duration);
+    savePrefs();
+    progress.classList.remove('show');
+    status.textContent=`✓ Revue du ${now.toLocaleDateString('fr-FR')} — bonne lecture !`;
+    showToast('✓ Revue générée !');
+  }catch(err){
+    console.error(err);progress.classList.remove('show');
+    status.textContent=`Erreur : ${err.message}`;
+    output.innerHTML=`<div class="empty-state"><div class="empty-icon">⚠</div><div class="empty-text">${err.message}</div></div>`;
+  }finally{btn.disabled=false;}
+}
+
+function renderDigest(articles,duration,langs){
+  const output=document.getElementById('digestOutput');
+  const words=articles.reduce((a,b)=>a+(b.summary_fr||'').split(' ').length,0);
+  const min=Math.round(words/200);
+  output.innerHTML=`
+    <div class="digest-header">
+      <span class="digest-heading">${new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}</span>
+      <span class="digest-reading">≈ ${min}–${min+3} min · ${articles.length} articles</span>
+    </div>
+    ${articles.map((a,i)=>renderCard(a,i)).join('')}`;
+}
+
+function renderCard(a,idx){
+  const vocab=(a.vocab||[]).map(v=>`<span class="vocab-chip"><span class="vocab-word">${v.word}</span><span class="vocab-sep">·</span><span class="vocab-def">${v.def}</span></span>`).join('');
+  return `
+    <div class="article-card">
+      <div class="article-meta">
+        <span class="lang-badge badge-${a.lang}">${a.lang.toUpperCase()}</span>
+        <span class="article-source">${a.source||''}</span>
+      </div>
+      <h2 class="article-title">${a.title||''}</h2>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(this,'sum-${idx}','tabs-${idx}')">Résumé FR</button>
+        <button class="tab-btn" onclick="switchTab(this,'ori-${idx}','tabs-${idx}')">Texte original</button>
+      </div>
+      <div id="tabs-${idx}">
+        <div class="tab-content active" id="sum-${idx}"><p class="summary-text">${a.summary_fr||''}</p></div>
+        <div class="tab-content" id="ori-${idx}"><p class="excerpt-text">${a.excerpt_original||''}</p></div>
+      </div>
+      ${vocab?`<div class="vocab-block"><div class="vocab-title">Vocabulaire à retenir</div><div class="vocab-list">${vocab}</div></div>`:''}
+      ${a.question?`<div class="question-block"><span class="q-icon">?</span><p class="q-text">${a.question}</p></div>`:''}
+    </div>`;
+}
+
+function switchTab(btn,targetId,containerId){
+  document.getElementById(containerId).querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  btn.closest('.tabs').querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(targetId).classList.add('active');btn.classList.add('active');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(console.error);
+
+loadPrefs();renderHistory();
+</script>
+</body>
+</html>
