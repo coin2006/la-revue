@@ -20,8 +20,8 @@
       --glow:#7b6ef6;--glow-dim:rgba(123,110,246,0.18);--glow-text:#a99ff8;
       --paper:#f7f5f0;--ink:#1a1a1a;--ink-mid:#5a5a6a;--ink-faint:#9a9aaa;
       --rule:rgba(255,255,255,0.08);
-      --en:#5b9bd5;--es:#e05c4b;--fr:#4caf82;
-      --en-bg:rgba(91,155,213,0.12);--es-bg:rgba(224,92,75,0.12);--fr-bg:rgba(76,175,130,0.12);
+      --en:#5b9bd5;--es:#e05c4b;--fr:#4caf82;--it:#2e8b57;--de:#c0392b;
+      --en-bg:rgba(91,155,213,0.12);--es-bg:rgba(224,92,75,0.12);--fr-bg:rgba(76,175,130,0.12);--it-bg:rgba(46,139,87,0.12);--de-bg:rgba(192,57,43,0.12);
       --radius:12px;--radius-sm:6px;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -102,6 +102,10 @@
     .badge-en{background:var(--en-bg);color:var(--en);}
     .badge-es{background:var(--es-bg);color:var(--es);}
     .badge-fr{background:var(--fr-bg);color:var(--fr);}
+    .badge-it{background:var(--it-bg);color:var(--it);}
+    .badge-de{background:var(--de-bg);color:var(--de);}
+    .on-it{background:var(--it-bg);border-color:var(--it);color:var(--it);}
+    .on-de{background:var(--de-bg);border-color:var(--de);color:var(--de);}
     .article-source{font-family:'Inter',sans-serif;font-size:11px;color:var(--ink-faint);letter-spacing:.08em;text-transform:uppercase;}
     .article-title{font-family:'Playfair Display',serif;font-size:clamp(1.2rem,2.5vw,1.55rem);font-weight:700;line-height:1.25;color:#fff;margin-bottom:16px;}
 
@@ -186,6 +190,8 @@
           <button class="lang-pill on-en" data-lang="en" onclick="toggleLang(this)">🇬🇧 EN</button>
           <button class="lang-pill on-es" data-lang="es" onclick="toggleLang(this)">🇪🇸 ES</button>
           <button class="lang-pill on-fr" data-lang="fr" onclick="toggleLang(this)">🇫🇷 FR</button>
+          <button class="lang-pill" data-lang="it" onclick="toggleLang(this)">🇮🇹 IT</button>
+          <button class="lang-pill" data-lang="de" onclick="toggleLang(this)">🇩🇪 DE</button>
         </div>
       </div>
     </div>
@@ -248,6 +254,8 @@ const SOURCES = {
   en:['The Economist','The Guardian','BBC News','Financial Times','The Atlantic'],
   es:['El País','El Mundo','La Vanguardia','El Confidencial','ABC'],
   fr:['Le Monde','Le Figaro','Libération','Les Echos',"L'Obs"],
+  it:['La Repubblica','Corriere della Sera','Il Sole 24 Ore','La Stampa','Il Fatto Quotidiano'],
+  de:['Der Spiegel','Die Zeit','Frankfurter Allgemeine Zeitung','Süddeutsche Zeitung','Die Welt'],
 };
 const now = new Date();
 document.getElementById('headerDate').textContent =
